@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>chat-bot</title>
+		<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/index.css')}}" />
+
+		<script>
+		var question = '{{question}}';
+			window.onload=function(){
+  /// call your function here
+
+			if(question != null)
+				printQuestion();
+		};
+
+			function printQuestion(){
+
+				var newQ = document.createElement("p");
+				var pText = document.createTextNode(question);
+				var chat = document.getElementById("chat");
+				newQ.appendChild(pText);
+				chat.appendChild(newQ);
+			}
+		</script>
+	</head>
+	<body>
+
+		<div class="container">
+			<iframe
+    allow="microphone;"
+    width="350"
+    height="430"
+    src="https://console.dialogflow.com/api-client/demo/embedded/8b7a9086-d744-4440-9147-b63545ed9e04">
+</iframe>
+			<!-- <form method="POST" action="/">
+			<h1 class="title">chat-bot</h1>
+
+			<div class="chat" id="chat" name = "chat"></div>
+
+			<div class="busy"></div>
+			<div class="input">
+
+				<input type="text" placeholder="Chat with me!" name="question"/>
+				<input type="submit">
+			</form>
+			</div> -->
+		</div>
+		<!-- <script type="text/javascript" src="{{url_for('static', filename='js/chat-bot.js')}}"></script>
+		<script type="text/javascript" src="{{url_for('static', filename='js/index.js')}}"></script>
+		<script type="text/javascript" src="{{url_for('static', filename='js/jquery-3.3.1.min.js')}}"></script> -->
+	</body>
+</html>
