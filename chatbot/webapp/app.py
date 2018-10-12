@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template
+import dialogflow_v2beta1
 
 app = Flask(__name__)
 
@@ -13,9 +14,9 @@ def my_form():
 
 @app.route('/', methods=['POST'])
 def my_form_post():
-    question = request.form.get("question")
-    chat = request.form.get("chat")
-    print(chat)
+    # question = request.form.get("question")
+    # chat = request.form.get("chat")
+    # print(chat)
     # print(question)
 
     return render_template('index.html', question = question)
