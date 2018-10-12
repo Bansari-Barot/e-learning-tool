@@ -1,0 +1,4 @@
+Open Terminal Type following commands to run flask appendChild
+
+$export FLASK_APP = chatbot.py
+$python chatbot.py
