@@ -1,0 +1,13 @@
+1) Crete virtual environment from python
+    $python3 -m venv env
+    $source env/bin/activate
+
+2) INSTALL THE REQUIREMENTS
+    $pip install -r requirements.txt
+
+3) Export the following things:
+    $export FLASK_APP=chatbot.py
+    $export GOOGLE_APPLICATION_CREDENTIALS='path to credential json file'
+
+4) To run
+      Type - $python chatbot.py

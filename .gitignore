@@ -111,3 +111,6 @@ venv.bak/
 dmypy.json
 
 .DS_Store
+
+config.py
+VirtualAssitsnt-b8278c42df35.json
