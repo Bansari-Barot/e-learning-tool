@@ -7,7 +7,7 @@
 
 3) Export the following things:
     $export FLASK_APP=chatbot.py
-    $export GOOGLE_APPLICATION_CREDENTIALS='path to credential json file'
+    $export GOOGLE_APPLICATION_CREDENTIALS='app/file_name'
 
 4) To run
       Type - $python chatbot.py
