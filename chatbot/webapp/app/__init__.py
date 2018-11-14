@@ -25,4 +25,4 @@ mongo = PyMongo(app)
 from app import main
 app.json_encoder = JSONEncoder
 
-from app.controllers import *
+#from app.controllers import *

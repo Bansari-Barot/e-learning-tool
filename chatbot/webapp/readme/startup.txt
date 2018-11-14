@@ -11,3 +11,13 @@
 
 4) To run
       Type - $python chatbot.py
+
+
+
+##################
+Run as a Docker
+
+Go to aiproject/chatbot folder and type following commands:
+
+$ docker-compose build
+$ docker-compose up

@@ -1,6 +1,7 @@
 FROM python:3.6.7
-ADD . /app
-WORKDIR /app
+ADD . /webapp
+WORKDIR /webapp
 EXPOSE 5000
 RUN pip install -r requirements.txt
-ENTRYPOINT ["python","chatbot.py"]
+CMD ["./startup"]
+#ENTRYPOINT ["python","chatbot.py"]

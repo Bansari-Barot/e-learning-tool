@@ -6,13 +6,27 @@ function submit_message(message) {
           $('.chat-container').append(`
                 <div class="chat-message col-md-5 offset-md-7 bot-message">
                     ${data.message}
+
                 </div>
+
           `)
           // remove the loading indicator
           $( "#loading" ).remove();
         }
     }
 
+    // $('#pfeedback').on('submit', function(e){
+    //   e.preventDefault();
+    //   $post("/positive_feedback",{message:message, response:data.message}, handle_feedback);
+    //   function handle-feedback(){
+    //
+    //   }
+    //
+    // });
+    // $('#nfeedback').on('submit', function(e){
+    //   e.preventDefault();
+    //
+    // });
 
     $('#target').on('submit', function(e){
             e.preventDefault();
