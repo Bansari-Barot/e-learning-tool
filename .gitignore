@@ -114,3 +114,10 @@ dmypy.json
 
 config.py
 VirtualAssitsnt-b8278c42df35.json
+chatbot/webapp/transfertraining-584ad-19b79e01f84f.json
+chatbot/webapp/app/_env
+chatbot/webapp/app/_flaskenv
+_DS_Store
+Database rough schema.json
+_gitignore
+chatbot/webapp/_gitignore
