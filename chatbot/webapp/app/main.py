@@ -6,9 +6,9 @@ import requests
 from config import Config
 import json
 import dialogflow_v2beta1
-
-
-
+from app.models import QA_pair
+from pymodm import connect
+from flask_pymongo import PyMongo
 
 
 #app = Flask(__name__)
@@ -17,7 +17,9 @@ import dialogflow_v2beta1
 
 @app.route('/')
 def index():
-
+    connect(app.config['MONGO_URI'])
+    qa = QA_pair(question="how are you?",answer="good!").save()
+    print(qa)
     return render_template('test.html')
 
 @app.route('/positive_feedback' ,methods=['POST'])
@@ -67,7 +69,7 @@ def detect_intent_texts(project_id, session_id, text, language_code):
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
-    
+
     message = request.form['message']
     project_id = Config.DIALOGFLOW_PROJECT_ID
     fulfillment_text = detect_intent_texts(project_id, "unique", message, 'en')

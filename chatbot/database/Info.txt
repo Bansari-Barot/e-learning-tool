@@ -1,0 +1,10 @@
+1) This folder is about mongodb database
+2) Dockerfile will create the Mongodb database
+2) test.js file will insert the dummy entry into of data into
+   mongodb container in database chatbot. Also test.js is
+   creating user name chatbot for chatbot database.
+3) Reason to create test.js is because environment variable
+   MONGO_INITDB_DATABASE=chatbot will only if there is some script
+   inside docker-entrypoint-initdb.d (docker-entrypoint-initdb.d will run
+   script inside itself into the mondo db container when mongodb container
+   run)

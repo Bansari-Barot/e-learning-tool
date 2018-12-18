@@ -3,7 +3,7 @@ from config import Config
 import json
 import datetime
 from bson.objectid import ObjectId
-from flask_pymongo import PyMongo
+from pymodm import connect
 
 class JSONEncoder(json.JSONEncoder):
     ''' extend json-encoder class'''
@@ -19,7 +19,7 @@ class JSONEncoder(json.JSONEncoder):
 app = Flask(__name__)
 
 app.config.from_object(Config)
-mongo = PyMongo(app)
+#mongo = PyMongo(app)
 
 
 from app import main
