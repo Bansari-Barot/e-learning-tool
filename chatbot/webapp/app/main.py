@@ -6,11 +6,12 @@ import requests
 from config import Config
 import json
 import dialogflow_v2beta1
-from app.models import QA_pair
+from app.models import Chat, Chat_History, Student, Course
 from pymodm import connect
 from flask_pymongo import PyMongo
-
-
+import datetime
+from bson.tz_util import utc, FixedOffset
+import time
 #app = Flask(__name__)
 
 
@@ -18,15 +19,16 @@ from flask_pymongo import PyMongo
 @app.route('/')
 def index():
     connect(app.config['MONGO_URI'])
-    qa = QA_pair(question="how are you?",answer="good!").save()
-    print(qa)
+    chat1=Chat(question="hi", answer="hello")
+    chat_history1=Chat_History(datetimestamp=datetime.datetime(2006, 7, 2, 1, 3, 4),c_id="12345", chats=[chat1])
+    student1 = Student(name="Oscar", netid="yr5667", chat_history=[chat_history1])
+    course = Course(course_id="BUS110",course_name="Information Systems and Application",
+        textbook="https://drive.google.com/file/d/14pTf5ZZ79HMSQVt4wfKtdLYVFowDlSvt/view?usp=sharing",
+        topics=["MS Office","LinkedIn learning"], students=[student1]).save()
+    print(course)
     return render_template('test.html')
+    
 
-@app.route('/positive_feedback' ,methods=['POST'])
-def pos_feedback():
-    print("user is satisfied")
-
-#
 # @app.route('/')
 # def my_form():
 #     return render_template('index.html')
