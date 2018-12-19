@@ -18,16 +18,28 @@ import time
 
 @app.route('/')
 def index():
+    # connect(app.config['MONGO_URI'])
+    # chat1=Chat(question="hi", answer="hello")
+    # chat_history1=Chat_History(datetimestamp=datetime.datetime(2006, 7, 2, 1, 3, 4),c_id="12345", chats=[chat1])
+    # student1 = Student(name="Oscar", netid="yr5667", chat_history=[chat_history1])
+    # course = Course(course_id="BUS110",course_name="Information Systems and Application",
+    #     textbook="https://drive.google.com/file/d/14pTf5ZZ79HMSQVt4wfKtdLYVFowDlSvt/view?usp=sharing",
+    #     topics=["MS Office","LinkedIn learning"], students=[student1]).save()
+    # print(course)
+    return render_template('test.html')
+
+@app.route('/<string:course_id>/<string:course_name>/<string:netid>/<string:name>/<string:session_id>', methods=['GET','POST'])
+def course_home(course_id,course_name,netid,name,session_id):
     connect(app.config['MONGO_URI'])
     chat1=Chat(question="hi", answer="hello")
-    chat_history1=Chat_History(datetimestamp=datetime.datetime(2006, 7, 2, 1, 3, 4),c_id="12345", chats=[chat1])
-    student1 = Student(name="Oscar", netid="yr5667", chat_history=[chat_history1])
-    course = Course(course_id="BUS110",course_name="Information Systems and Application",
+    chat_history1=Chat_History(datetimestamp=datetime.datetime(2006, 5, 2, 1, 3, 4),c_id=session_id, chats=[chat1])
+    student1 = Student(name=name, netid="yr5667", chat_history=[chat_history1])
+    course = Course(course_id=course_id,course_name=course_name,
         textbook="https://drive.google.com/file/d/14pTf5ZZ79HMSQVt4wfKtdLYVFowDlSvt/view?usp=sharing",
         topics=["MS Office","LinkedIn learning"], students=[student1]).save()
     print(course)
-    return render_template('test.html')
-    
+    return '{} {} {} {} {}'.format(course_id,course_name,netid,name,session_id)
+
 
 # @app.route('/')
 # def my_form():
