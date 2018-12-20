@@ -3,13 +3,12 @@ function submit_message(message) {
 
         function handle_response(data) {
           // append the bot repsonse to the div
-          $('.chat-container').append(`
-                <div class="chat-message col-md-5 offset-md-7 bot-message">
-                    ${data.message}
 
-                </div>
+          $('.chat-container').append(`<div class="chat-message bot-message" id="bMsg">
+             ${data.message}
+         </div>`)
+         $('.chat-container').scrollTop(1000);
 
-          `)
           // remove the loading indicator
           $( "#loading" ).remove();
         }
@@ -37,7 +36,7 @@ function submit_message(message) {
             }
 
             $('.chat-container').append(`
-                <div class="chat-message col-md-5 human-message">
+                <div class="chat-message human-message">
                     ${input_message}
                 </div>
             `)
