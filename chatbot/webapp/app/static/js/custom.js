@@ -1,3 +1,11 @@
+// var socket = io.connect('http://localhost:5000/');
+// alert(socket)
+// socket.on('connect', function(){
+//   alert("connect before");
+//   socket.emit("my event",{data:'connected'});
+//   alert("connect after");
+// });
+
 function submit_message(message) {
         $.post( "/send_message", {message: message}, handle_response);
 
@@ -50,6 +58,9 @@ function submit_message(message) {
 
             // clear the text input
             $('#input_message').val('')
+
+            // var socket = io.connect('http://localhost:5000/');
+            // alert(socket);
 
             // send the message
             submit_message(input_message)

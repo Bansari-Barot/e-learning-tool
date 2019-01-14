@@ -15,9 +15,10 @@ class Chat_History(EmbeddedMongoModel):
     datetimestamp=fields.DateTimeField()
     c_id=fields.CharField()
     chats=fields.EmbeddedDocumentListField(Chat)
+
 class Student(EmbeddedMongoModel):
     name=fields.CharField()
-    netid=fields.CharField()
+    email_id=fields.CharField()
     chat_history=fields.EmbeddedDocumentListField(Chat_History)
 
 

@@ -1,4 +1,4 @@
-from flask import request, render_template,jsonify
+from flask import session,request, render_template,jsonify
 from app import app
 import dialogflow
 import os
@@ -13,6 +13,8 @@ import datetime
 from bson.tz_util import utc, FixedOffset
 import time
 #app = Flask(__name__)
+from app import socketio
+from flask_socketio import send, emit
 
 
 
@@ -28,13 +30,13 @@ def index():
     # print(course)
     return render_template('test.html')
 
-@app.route('/<string:course_id>/<string:course_name>/<string:netid>/<string:name>/<string:session_id>', methods=['GET','POST'])
-def course_home(course_id,course_name,netid,name,session_id):
+@app.route('/<string:course_id>/<string:name>/<string:email_id>', methods=['GET','POST'])
+def course_home(course_id,course_name,email_id,name):
     connect(app.config['MONGO_URI'])
     chat1=Chat(question="hi", answer="hello")
-    chat_history1=Chat_History(datetimestamp=datetime.datetime(2006, 5, 2, 1, 3, 4),c_id=session_id, chats=[chat1])
-    student1 = Student(name=name, netid="yr5667", chat_history=[chat_history1])
-    course = Course(course_id=course_id,course_name=course_name,
+    chat_history1=Chat_History(datetimestamp=datetime.datetime(2006, 5, 2, 1, 3, 4),c_id="123", chats=[chat1])
+    student1 = Student(name=name, email_id=email_id, chat_history=[chat_history1])
+    course = Course(course_id=course_id,course_name="BUS 100",
         textbook="https://drive.google.com/file/d/14pTf5ZZ79HMSQVt4wfKtdLYVFowDlSvt/view?usp=sharing",
         topics=["MS Office","LinkedIn learning"], students=[student1]).save()
     print(course)
@@ -88,6 +90,10 @@ def send_message():
     project_id = Config.DIALOGFLOW_PROJECT_ID
     fulfillment_text = detect_intent_texts(project_id, "unique", message, 'en')
     response_text = { "message":  fulfillment_text }
+    #add QA into db - update query_input
+    connect(app.config['MONGO_URI'])
+    Course.objects.raw({"course_id":"BUS200" ,"students.email_id":"jh@horizon.csueastbay.edu","students.chat_history.c_id":"54263"}).update(
+        { "$push":{"students.$.chat_history.0.chats": { "$each": [{ "question":message, "answer":fulfillment_text }] }}} )
 
     return jsonify(response_text)
 
@@ -117,3 +123,10 @@ def create_intent(project_id, display_name, training_phrases_parts,
     response = intents_client.create_intent(parent, intent)
 
     print('Intent created: {}'.format(response))
+
+
+# socket io implementation
+# @socketio.on('connect')
+# def socket_connection():
+#     print("connection", request.sid)
+#     session['websocket'] = request.sid

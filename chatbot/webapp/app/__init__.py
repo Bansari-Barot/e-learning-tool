@@ -4,6 +4,7 @@ import json
 import datetime
 from bson.objectid import ObjectId
 from pymodm import connect
+from flask_socketio import SocketIO
 
 class JSONEncoder(json.JSONEncoder):
     ''' extend json-encoder class'''
@@ -16,10 +17,13 @@ class JSONEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
+
 app = Flask(__name__)
+
 
 app.config.from_object(Config)
 #mongo = PyMongo(app)
+socketio = SocketIO(app)
 
 
 from app import main
