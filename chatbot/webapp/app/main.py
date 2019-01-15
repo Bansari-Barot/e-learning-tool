@@ -17,7 +17,6 @@ from app import socketio
 from flask_socketio import send, emit
 
 
-
 @app.route('/')
 def index():
     # connect(app.config['MONGO_URI'])
@@ -83,19 +82,17 @@ def detect_intent_texts(project_id, session_id, text, language_code):
 
             return response.query_result.fulfillment_text
 
-@app.route('/send_message', methods=['POST'])
-def send_message():
+def send_message(question):
 
-    message = request.form['message']
     project_id = Config.DIALOGFLOW_PROJECT_ID
-    fulfillment_text = detect_intent_texts(project_id, "unique", message, 'en')
+    fulfillment_text = detect_intent_texts(project_id, "unique", question, 'en')
     response_text = { "message":  fulfillment_text }
     #add QA into db - update query_input
     connect(app.config['MONGO_URI'])
     Course.objects.raw({"course_id":"BUS200" ,"students.email_id":"jh@horizon.csueastbay.edu","students.chat_history.c_id":"54263"}).update(
-        { "$push":{"students.$.chat_history.0.chats": { "$each": [{ "question":message, "answer":fulfillment_text }] }}} )
+        { "$push":{"students.$.chat_history.0.chats": { "$each": [{ "question":question, "answer":fulfillment_text }] }}} )
 
-    return jsonify(response_text)
+    return response_text
 
 def create_intent(project_id, display_name, training_phrases_parts,
                   message_texts):
@@ -121,12 +118,22 @@ def create_intent(project_id, display_name, training_phrases_parts,
         messages=[message])
 
     response = intents_client.create_intent(parent, intent)
-
     print('Intent created: {}'.format(response))
 
-
 # socket io implementation
-# @socketio.on('connect')
-# def socket_connection():
-#     print("connection", request.sid)
-#     session['websocket'] = request.sid
+@socketio.on('connect')
+def socket_connection():
+    print("connection", request.sid)
+    session['websocket'] = request.sid
+
+@socketio.on('disconnect')
+def socket_disconnect():
+    pass
+
+@socketio.on('question')
+def handle_question(msg):
+    # get a question and its answer here
+    question = msg['question']
+    sid = request.sid
+    answer = send_message(question)
+    socketio.emit('answer',answer,room = sid)

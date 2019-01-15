@@ -1,4 +1,4 @@
-// var socket = io.connect('http://localhost:5000/');
+var socket = io.connect('http://localhost:5000/');
 // alert(socket)
 // socket.on('connect', function(){
 //   alert("connect before");
@@ -6,21 +6,19 @@
 //   alert("connect after");
 // });
 
-function submit_message(message) {
-        $.post( "/send_message", {message: message}, handle_response);
 
-        function handle_response(data) {
-          // append the bot repsonse to the div
+socket.on('answer',function(data) {
+// append the bot repsonse to the div
 
-          $('.chat-container').append(`<div class="chat-message bot-message" id="bMsg">
-             ${data.message}
-         </div>`)
-         $('.chat-container').scrollTop(1000);
+  $('.chat-container').append(`<div class="chat-message bot-message" id="bMsg">
+  ${data.message}
+  </div>`)
+  $('.chat-container').scrollTop(1000);
 
-          // remove the loading indicator
-          $( "#loading" ).remove();
-        }
-    }
+  // remove the loading indicator
+  $( "#loading" ).remove();
+});
+
 
     // $('#pfeedback').on('submit', function(e){
     //   e.preventDefault();
@@ -37,6 +35,7 @@ function submit_message(message) {
 
     $('#target').on('submit', function(e){
             e.preventDefault();
+            //alert("hi");
             const input_message = $('#input_message').val()
             // return if the user does not enter any text
             if (!input_message) {
@@ -59,9 +58,8 @@ function submit_message(message) {
             // clear the text input
             $('#input_message').val('')
 
-            // var socket = io.connect('http://localhost:5000/');
-            // alert(socket);
 
             // send the message
-            submit_message(input_message)
+            socket.emit('question',{question:input_message})
+            //submit_message(input_message)
         });
