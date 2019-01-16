@@ -1,10 +1,5 @@
 var socket = io.connect('http://localhost:5000/');
-// alert(socket)
-// socket.on('connect', function(){
-//   alert("connect before");
-//   socket.emit("my event",{data:'connected'});
-//   alert("connect after");
-// });
+
 
 
 socket.on('answer',function(data) {
@@ -19,19 +14,6 @@ socket.on('answer',function(data) {
   $( "#loading" ).remove();
 });
 
-
-    // $('#pfeedback').on('submit', function(e){
-    //   e.preventDefault();
-    //   $post("/positive_feedback",{message:message, response:data.message}, handle_feedback);
-    //   function handle-feedback(){
-    //
-    //   }
-    //
-    // });
-    // $('#nfeedback').on('submit', function(e){
-    //   e.preventDefault();
-    //
-    // });
 
     $('#target').on('submit', function(e){
             e.preventDefault();
@@ -60,6 +42,8 @@ socket.on('answer',function(data) {
 
 
             // send the message
-            socket.emit('question',{question:input_message})
+            alert("Hi")
+            //alert( {{course_info.name}} )
+            socket.emit('question',{question:input_message,email_id: {{course_info.email_id}}, name: {{course_info.name}}, course_id: {{course_info.course_id}} })
             //submit_message(input_message)
         });

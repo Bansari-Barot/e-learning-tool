@@ -12,63 +12,45 @@ from flask_pymongo import PyMongo
 import datetime
 from bson.tz_util import utc, FixedOffset
 import time
-#app = Flask(__name__)
+
 from app import socketio
 from flask_socketio import send, emit
 
 
-@app.route('/')
-def index():
-    # connect(app.config['MONGO_URI'])
-    # chat1=Chat(question="hi", answer="hello")
-    # chat_history1=Chat_History(datetimestamp=datetime.datetime(2006, 7, 2, 1, 3, 4),c_id="12345", chats=[chat1])
-    # student1 = Student(name="Oscar", netid="yr5667", chat_history=[chat_history1])
-    # course = Course(course_id="BUS110",course_name="Information Systems and Application",
-    #     textbook="https://drive.google.com/file/d/14pTf5ZZ79HMSQVt4wfKtdLYVFowDlSvt/view?usp=sharing",
-    #     topics=["MS Office","LinkedIn learning"], students=[student1]).save()
-    # print(course)
-    return render_template('test.html')
-
 @app.route('/<string:course_id>/<string:name>/<string:email_id>', methods=['GET','POST'])
-def course_home(course_id,course_name,email_id,name):
+def index(course_id, name, email_id):
     connect(app.config['MONGO_URI'])
-    chat1=Chat(question="hi", answer="hello")
-    chat_history1=Chat_History(datetimestamp=datetime.datetime(2006, 5, 2, 1, 3, 4),c_id="123", chats=[chat1])
-    student1 = Student(name=name, email_id=email_id, chat_history=[chat_history1])
-    course = Course(course_id=course_id,course_name="BUS 100",
-        textbook="https://drive.google.com/file/d/14pTf5ZZ79HMSQVt4wfKtdLYVFowDlSvt/view?usp=sharing",
-        topics=["MS Office","LinkedIn learning"], students=[student1]).save()
-    print(course)
-    return '{} {} {} {} {}'.format(course_id,course_name,netid,name,session_id)
 
 
-# @app.route('/')
-# def my_form():
-#     return render_template('index.html')
-#
-# @app.route('/')
-# def my_form_post():
-#     # question = request.form.get("question")
-#     # chat = request.form.get("chat")
-#     # print(chat)
-#     # print(question)
-#
-#     return render_template('index.html', question = question)
+    # Here first check whether course is there in db or not and if not then in except add that course,student into db
+    try:
+        course = Course.objects.get({'course_id':course_id})
+        print(course)
+        # Second check whether the students is exist inside the course or not if not then in except add students into that
+        # course
+        try:
+            user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
+            course_info = {"name": name, "email_id": email_id, "course_id": course_id}
+            return render_template('index.html',name= name, email_id= email_id, course_id= course_id)
+        except Course.DoesNotExist:
+            course_info = {"name": name, "email_id": email_id, "course_id": course_id}
+            Course.objects.raw({"course_id":course_id}).update(
+                { "$push":{"students": { "$each": [{'name':name,'email_id':email_id}] } } } )
+            user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
+            st = str(user.students)
+            return render_template('index.html',name= name, email_id= email_id, course_id= course_id)
 
-# def test():
-#     client = dialogflow_v2beta1.AgentsClient()
-#     parent = client.project_path(Config.DIALOGFLOW_PROJECT_ID)
-#     response = client.export_agent(parent)
-#     # print("response", response)
-#     def callback(operation_future):
-#         result = operation_future.result()
-#         #print("result",result)
-#
-#
-#     response.add_done_callback(callback)
-#     print("response", response)
-#     metadata = response.metadata()
-#     print("metadata",metadata)
+    except Course.DoesNotExist:
+        student = Student(name=name, email_id=email_id)
+        course = Course(course_id=course_id,course_name="Information Systems & Applications",
+                        textbook="https://drive.google.com/file/d/14pTf5ZZ79HMSQVt4wfKtdLYVFowDlSvt/view?usp=sharing",
+                        topics=["MS Office","LinkedIn learning"], students=[student]).save()
+        course = Course.objects.get({'course_id':course_id})
+        print(course)
+        course_info = {"name": name, "email_id": email_id, "course_id": course_id}
+        return render_template('index.html',name= name, email_id= email_id, course_id= course_id)
+
+
 
 def detect_intent_texts(project_id, session_id, text, language_code):
         session_client = dialogflow.SessionsClient()
@@ -82,15 +64,29 @@ def detect_intent_texts(project_id, session_id, text, language_code):
 
             return response.query_result.fulfillment_text
 
-def send_message(question):
+def send_message(question, sid, name, email_id, course_id, date):
 
     project_id = Config.DIALOGFLOW_PROJECT_ID
     fulfillment_text = detect_intent_texts(project_id, "unique", question, 'en')
     response_text = { "message":  fulfillment_text }
     #add QA into db - update query_input
     connect(app.config['MONGO_URI'])
-    Course.objects.raw({"course_id":"BUS200" ,"students.email_id":"jh@horizon.csueastbay.edu","students.chat_history.c_id":"54263"}).update(
-        { "$push":{"students.$.chat_history.0.chats": { "$each": [{ "question":question, "answer":fulfillment_text }] }}} )
+
+    try:
+        user = Course.objects.get({"students.chat_history.c_id":sid})
+        Course.objects.raw({"course_id":course_id, "students.email_id":email_id,"students.chat_history.c_id":sid}).update(
+           { "$push":{"students.$.chat_history.0.chats": { "$each": [{ "question":question, "answer":fulfillment_text }] }}})
+
+    except Course.DoesNotExist:
+        Course.objects.raw({ "course_id":course_id, "students.email_id":email_id }).update(
+            { "$push":{"students.$.chat_history": {"$each":[{"datetimestamp" : date,
+                                                             "c_id":sid,
+                                                             "chats" : [ {"question": question,"answer":fulfillment_text} ] }] } } }
+             )
+
+    # use try and except for insert and upsert
+    #Course.objects.raw({"course_id":"BUS200" ,"students.email_id":"jh@horizon.csueastbay.edu","students.chat_history.c_id":sid}).update(
+    #    { "$push":{"students.$.chat_history.0.chats": { "$each": [{ "question":question, "answer":fulfillment_text }] }}})
 
     return response_text
 
@@ -134,6 +130,11 @@ def socket_disconnect():
 def handle_question(msg):
     # get a question and its answer here
     question = msg['question']
+    name = msg['name']
+    email_id = msg['email_id']
+    course_id = msg['course_id']
     sid = request.sid
-    answer = send_message(question)
+    date = datetime.datetime.now()
+    # check whether the the sid is already in chat history if not then insert else update query
+    answer = send_message(question,sid,name,email_id,course_id,date)
     socketio.emit('answer',answer,room = sid)

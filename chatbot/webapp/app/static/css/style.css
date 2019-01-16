@@ -38,3 +38,7 @@ body,html {
       border: 1px solid black;
       border-radius: 3px;
     }
+
+h1{
+  font-family: sans-serif;
+}
