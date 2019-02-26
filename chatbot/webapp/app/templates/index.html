@@ -46,7 +46,7 @@
         <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
         <script>
-          var socket = io.connect('http://ec2-54-67-94-33.us-west-1.compute.amazonaws.com:80/');
+          var socket = io.connect('http://localhost:80');
 
 
           socket.on('answer',function(data) {
@@ -72,7 +72,7 @@
 
                       $('.chat-container').append(`
                           <div class="chat-message human-message">
-                               ${input_message}
+                          ${data.name}:  ${input_message}
                           </div>
                       `)
 
