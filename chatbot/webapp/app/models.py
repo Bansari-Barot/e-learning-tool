@@ -20,6 +20,7 @@ class Student(EmbeddedMongoModel):
     name=fields.CharField()
     email_id=fields.CharField()
     chat_history=fields.EmbeddedDocumentListField(Chat_History)
+    net_id = fields.CharField()
 
 
 class Course(MongoModel):

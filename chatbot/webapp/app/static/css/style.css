@@ -37,8 +37,13 @@ body,html {
       height: 60px;
       border: 1px solid black;
       border-radius: 3px;
+      padding-left: 10px;
     }
 
 h1{
   font-family: sans-serif;
+}
+
+input {
+   padding-left: 10px;
 }
