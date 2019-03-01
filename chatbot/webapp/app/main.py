@@ -1,4 +1,4 @@
-from flask import session,request, render_template,jsonify
+ from flask import session,request, render_template,jsonify
 from app import app
 import dialogflow
 import os
@@ -20,10 +20,10 @@ from flask_socketio import send, emit
 # def login():
 #     return render_template('login.html')
 
-#if the student enters parameters as form elements / not by BB
+#LTI arguments by BB
 @app.route('/', methods=['GET','POST'])
 def index():
-    if request.method == 'POST':
+    if request.form:
         info_user=request.form
         name=info_user['lis_person_name_full']
         role=info_user['roles']
@@ -32,48 +32,38 @@ def index():
         course_name=info_user['context_title']
         email_id = info_user['lis_person_contact_email_primary']
 
-
-    if request.method == 'GET':
-        info_user=request.form
-        name=info_user['lis_person_name_full']
-        email_id = info_user['lis_person_contact_email_primary']
-        role=info_user['roles']
-        course_id=info_user['context_label']
-        net_id=info_user['lis_person_sourcedid']
-        course_name=info_user['context_title']
-
-
-    connect(app.config['MONGO_URI'])
+        connect(app.config['MONGO_URI'])
 
 
     # Here first check whether course is there in db or not and if not then in except add that course,student into db
-    try:
-        course = Course.objects.get({'course_id':course_id})
-        print(course)
-        # Second check whether the students is exist inside the course or not if not then in except add students into that
-        # course
         try:
-            user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
-            course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-            return render_template('index.html',name= name, email_id= email_id, course_id= course_id, course_name=course_name, net_id=net_id)
+            course = Course.objects.get({'course_id':course_id})
+            print(course)
+            # Second check whether the students is exist inside the course or not if not then in except add students into that
+            # course
+            try:
+                user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
+                course_info = {"name": name, "email_id": email_id, "course_id": course_id}
+                return render_template('index.html',name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+            except Course.DoesNotExist:
+                course_info = {"name": name, "email_id": email_id, "course_id": course_id}
+                Course.objects.raw({"course_id":course_id}).update(
+                    { "$push":{"students": { "$each": [{'name':name,'email_id':email_id, 'net_id':net_id}] } } } )
+                user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
+                st = str(user.students)
+                return render_template('index.html',name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+
         except Course.DoesNotExist:
+            student = Student(name=name, email_id=email_id, net_id=net_id)
+            course = Course(course_id=course_id,course_name=course_name,
+                            textbook="https://drive.google.com/file/d/14pTf5ZZ79HMSQVt4wfKtdLYVFowDlSvt/view?usp=sharing",
+                            topics=["MS Office","LinkedIn learning"], students=[student]).save()
+            course = Course.objects.get({'course_id':course_id})
+            print(course)
             course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-            Course.objects.raw({"course_id":course_id}).update(
-                { "$push":{"students": { "$each": [{'name':name,'email_id':email_id, 'net_id':net_id}] } } } )
-            user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
-            st = str(user.students)
-            return render_template('index.html',name= name, email_id= email_id, course_id= course_id, course_name=course_name, net_id=net_id)
-
-    except Course.DoesNotExist:
-        student = Student(name=name, email_id=email_id, net_id=net_id)
-        course = Course(course_id=course_id,course_name=course_name,
-                        textbook="https://drive.google.com/file/d/14pTf5ZZ79HMSQVt4wfKtdLYVFowDlSvt/view?usp=sharing",
-                        topics=["MS Office","LinkedIn learning"], students=[student]).save()
-        course = Course.objects.get({'course_id':course_id})
-        print(course)
-        course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-        return render_template('index.html',name= name, email_id= email_id, course_id= course_id, course_name=course_name, net_id=net_id)
-
+            return render_template('index.html',name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+    else:
+        return "LOGIN TO BLACKBOARD AND CLICK ON TOOL LINK"
 
 
 def detect_intent_texts(project_id, session_id, text, language_code):

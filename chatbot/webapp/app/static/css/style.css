@@ -17,18 +17,27 @@ body,html {
     border-radius: 3px;
     margin: 3px;
     max-width: 98%;
+    border-radius: 25px;
+    background:#cce5ff;
+    /* padding: 20px; */
+    /* width: 200px; */
+    height: 100px;
 }
 
 .bot-message {
     background: white;
     color: black;
-    font-style: italic;
+    font-style: sans-serif;
+    border-radius: 25px;
+    background:#cce5ff;
 }
 
     .human-message {
         background: white;
         color: black;
         text-align: right;
+        border-radius: 25px;
+        background:#cce5ff;
     }
 
     .input {
