@@ -21,6 +21,7 @@ class Student(EmbeddedMongoModel):
     email_id=fields.CharField()
     chat_history=fields.EmbeddedDocumentListField(Chat_History)
     net_id = fields.CharField()
+    role=fields.CharField()
 
 
 class Course(MongoModel):

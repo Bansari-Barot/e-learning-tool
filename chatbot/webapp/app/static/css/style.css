@@ -5,29 +5,47 @@ body,html {
     }
 
 .chat-container {
-  background-color: fffaf0;
-      margin: 0px;
-      padding: px;
-      border: 2px solid;
-      align-content: center;
+    background-color: fffaf0;
+    margin: 0px;
+    align-content: center;
   }
 
 .chat-message {
     padding: 4px;
     border-radius: 3px;
     margin: 3px;
-    max-width: 98%;
+    max-width: 85%;
 }
+.rcorners1 {
 
+    background:#FFFCE9;
+    width: fit-content;
+    border-radius: 25px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 15px;
+    align-self: left;
+  }
+  .humantext{
+    border-radius: 25px;
+    background:#4885ed;
+    align-self: right;
+    width: fit-content;
+    margin-left: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 15px;
+  }
 .bot-message {
-    background: white;
+
     color: black;
     font-style: italic;
+    
 }
 
     .human-message {
-        background: white;
-        color: black;
+
+        color: white;
         text-align: right;
     }
 

@@ -44,26 +44,67 @@ def index():
             try:
                 user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
                 course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-                return render_template('index.html',name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+                return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name)
             except Course.DoesNotExist:
                 course_info = {"name": name, "email_id": email_id, "course_id": course_id}
                 Course.objects.raw({"course_id":course_id}).update(
                     { "$push":{"students": { "$each": [{'name':name,'email_id':email_id, 'net_id':net_id}] } } } )
                 user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
                 st = str(user.students)
-                return render_template('index.html',name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+                return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name)
 
         except Course.DoesNotExist:
-            student = Student(name=name, email_id=email_id, net_id=net_id)
+            student = Student(name=name, email_id=email_id, net_id=net_id,role=role)
             course = Course(course_id=course_id,course_name=course_name,
                             textbook="https://drive.google.com/file/d/14pTf5ZZ79HMSQVt4wfKtdLYVFowDlSvt/view?usp=sharing",
                             topics=["MS Office","LinkedIn learning"], students=[student]).save()
             course = Course.objects.get({'course_id':course_id})
             print(course)
             course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-            return render_template('index.html',name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+            return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name)
     else:
-        return "LOGIN AGAIN AND CLICK ON TOOL LINK"
+        return render_template('login.html')
+        #return render_template('index.html',role=role,name= "bansri", email_id= "bansri.barot72@gmail.com", course_id= "CSUEB", course_name="CSUEB generic Q/A")
+
+@app.route('/login', methods=['GET','POST'])
+def guest_login():
+
+    name=request.form['name']
+    role="guest"
+    course_id="CSUEB"
+    net_id=request.form['net_id']
+    course_name="CSUEB General Questions"
+    email_id =request.form['email_id']
+
+    connect(app.config['MONGO_URI'])
+
+
+# Here first check whether course is there in db or not and if not then in except add that course,student into db
+    try:
+        course = Course.objects.get({'course_id':course_id})
+        print(course)
+        # Second check whether the students is exist inside the course or not if not then in except add students into that
+        # course
+        try:
+            user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
+            course_info = {"name": name, "email_id": email_id, "course_id": course_id}
+            return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+        except Course.DoesNotExist:
+            course_info = {"name": name, "email_id": email_id, "course_id": course_id}
+            Course.objects.raw({"course_id":course_id}).update(
+                { "$push":{"students": { "$each": [{'name':name,'email_id':email_id, 'net_id':net_id}] } } } )
+            user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
+            st = str(user.students)
+            return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+
+    except Course.DoesNotExist:
+        student = Student(name=name, email_id=email_id, net_id=net_id, role=role)
+        course = Course(course_id=course_id,course_name=course_name,students=[student]).save()
+        course = Course.objects.get({'course_id':course_id})
+        print(course)
+        course_info = {"name": name, "email_id": email_id, "course_id": course_id}
+        return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+
 
 
 def detect_intent_texts(project_id, session_id, text, language_code):
