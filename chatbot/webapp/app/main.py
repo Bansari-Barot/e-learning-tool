@@ -11,7 +11,7 @@ from pymodm import connect
 from flask_pymongo import PyMongo
 import datetime
 from bson.tz_util import utc, FixedOffset
-import time
+import datetime
 
 from app import socketio
 from flask_socketio import send, emit
@@ -31,7 +31,14 @@ def index():
         net_id=info_user['lis_person_sourcedid']
         course_name=info_user['context_title']
         email_id = info_user['lis_person_contact_email_primary']
-
+        currentTime=datetime.datetime.now()
+        greeting=""
+        if currentTime.hour<12:
+            greeting="Good morning"
+        elif 12<= currentTime.hour <18:
+            greeting="Good afternoon"
+        else:
+            greeting="Good evening"
         connect(app.config['MONGO_URI'])
 
 
@@ -44,14 +51,14 @@ def index():
             try:
                 user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
                 course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-                return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+                return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name, greeting=greeting)
             except Course.DoesNotExist:
                 course_info = {"name": name, "email_id": email_id, "course_id": course_id}
                 Course.objects.raw({"course_id":course_id}).update(
                     { "$push":{"students": { "$each": [{'name':name,'email_id':email_id, 'net_id':net_id}] } } } )
                 user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
                 st = str(user.students)
-                return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+                return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
 
         except Course.DoesNotExist:
             student = Student(name=name, email_id=email_id, net_id=net_id,role=role)
@@ -61,7 +68,7 @@ def index():
             course = Course.objects.get({'course_id':course_id})
             print(course)
             course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-            return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+            return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
     else:
         return render_template('login.html')
         #return render_template('index.html',role=role,name= "bansri", email_id= "bansri.barot72@gmail.com", course_id= "CSUEB", course_name="CSUEB generic Q/A")
@@ -75,7 +82,14 @@ def guest_login():
     net_id=request.form['net_id']
     course_name="CSUEB General Questions"
     email_id =request.form['email_id']
-
+    currentTime=datetime.datetime.now()
+    greeting=""
+    if currentTime.hour<12:
+        greeting="Good morning"
+    elif 12<= currentTime.hour <18:
+        greeting="Good afternoon"
+    else:
+        greeting="Good evening"
     connect(app.config['MONGO_URI'])
 
 
@@ -88,14 +102,14 @@ def guest_login():
         try:
             user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
             course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-            return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+            return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
         except Course.DoesNotExist:
             course_info = {"name": name, "email_id": email_id, "course_id": course_id}
             Course.objects.raw({"course_id":course_id}).update(
                 { "$push":{"students": { "$each": [{'name':name,'email_id':email_id, 'net_id':net_id}] } } } )
             user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
             st = str(user.students)
-            return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+            return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
 
     except Course.DoesNotExist:
         student = Student(name=name, email_id=email_id, net_id=net_id, role=role)
@@ -103,7 +117,7 @@ def guest_login():
         course = Course.objects.get({'course_id':course_id})
         print(course)
         course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-        return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name)
+        return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
 
 
 
