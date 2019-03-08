@@ -16,15 +16,17 @@ body,html {
     margin: 3px;
     max-width: 85%;
 }
+
 .rcorners1 {
 
-    background:#FFFCE9;
+    background:lightgrey;
     width: fit-content;
     border-radius: 25px;
     padding-left: 20px;
     padding-right: 20px;
     margin-top: 15px;
     align-self: left;
+    width: -moz-fit-content;
   }
   .humantext{
     border-radius: 25px;
@@ -35,12 +37,13 @@ body,html {
     padding-left: 20px;
     padding-right: 20px;
     margin-top: 15px;
+    width: -moz-fit-content;
   }
 .bot-message {
 
     color: black;
     font-style: italic;
-    
+
 }
 
     .human-message {
