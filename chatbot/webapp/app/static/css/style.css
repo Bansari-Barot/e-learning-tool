@@ -27,6 +27,7 @@ body,html {
     margin-top: 15px;
     align-self: left;
     width: -moz-fit-content;
+    font-family:Courier New;
   }
   .humantext{
     border-radius: 25px;
@@ -38,6 +39,7 @@ body,html {
     padding-right: 20px;
     margin-top: 15px;
     width: -moz-fit-content;
+    font-family:Courier New;
   }
 .bot-message {
 
@@ -61,8 +63,8 @@ body,html {
       padding-left: 10px;
     }
 
-h1{
-  font-family: sans-serif;
+h3{
+  font-family:Courier New;
 }
 
 input {

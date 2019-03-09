@@ -1,4 +1,4 @@
-r<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>Login Page</title>
@@ -7,12 +7,22 @@ r<!DOCTYPE html>
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/util.css') }}">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
 <!--===============================================================================================-->
 </head>
 <body>
 
 	<div class="limiter">
 		<div class="container-login100">
+
+				<ul class="nav justify-content-center">
+					<li class="nav-item">
+						<a class="nav-link active" href="#"><img src="{{ url_for('static', filename='img/CSUEBOC_logo.png') }}" alt="BlackBoard Login" height="100px" width="325px"/></a>
+					</li>
+
+				</ul>
+
+
 			<div class="wrap-login100">
 				<form class="login100-form validate-form p-l-55 p-r-55 p-t-178" action="/login" method="POST">
 					<span class="login100-form-title">
