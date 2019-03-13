@@ -14,7 +14,14 @@ class create_intent():
         with open(csv_file) as csvfile:
             readCSV = csv.reader(csvfile, delimiter=',')
             for row in readCSV:
-                rows.append(row)
+                print(row)
+                st = []
+                for j in row:
+                    #print(j)
+                    if j not in (None, ""):
+                        st.append(j)
+
+                rows.append(st)
 
         print(rows)
         count=0
@@ -27,7 +34,7 @@ class create_intent():
 
                   "messages": [
                     {
-
+                      "type": 0,
                       "speech": i[-1]
                     }
                   ],
