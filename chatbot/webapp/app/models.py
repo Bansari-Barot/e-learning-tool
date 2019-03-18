@@ -30,3 +30,8 @@ class Course(MongoModel):
     textbook=fields.URLField()
     topics=fields.ListField()
     students=fields.EmbeddedDocumentListField(Student)
+
+class Agent(MongoModel):
+    course_id=fields.CharField()
+    file_name=fields.CharField()
+    project_id=fields.CharField()

@@ -1,4 +1,5 @@
 #!/bin/bash
 export FLASK_APP=chatbot.py
-export GOOGLE_APPLICATION_CREDENTIALS='VirtualAssitsnt-b8278c42df35.json'
+#export GOOGLE_APPLICATION_CREDENTIALS='VirtualAssitsnt-b8278c42df35.json'
+python insertdata.py
 python chatbot.py

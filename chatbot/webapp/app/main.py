@@ -6,13 +6,14 @@ import requests
 from config import Config
 import json
 import dialogflow_v2beta1
-from app.models import Chat, Chat_History, Student, Course
+from app.models import Chat, Chat_History, Student, Course, Agent
 from pymodm import connect
 from flask_pymongo import PyMongo
 import datetime
 from bson.tz_util import utc, FixedOffset
 import datetime
-
+from os.path import dirname, abspath
+from google.auth._default import _load_credentials_from_file
 from app import socketio
 from flask_socketio import send, emit
 
@@ -121,7 +122,17 @@ def guest_login():
 
 
 
-def detect_intent_texts(project_id, session_id, text, language_code):
+def detect_intent_texts(session_id, text, language_code, course_id):
+        # connect to db to get the name of agent file for course id
+        connect(app.config['MONGO_URI'])
+        agent = Agent.objects.get({'course_id':course_id})
+        file_name = agent.file_name
+        print(file_name)
+        path_to_file = dirname(dirname(abspath(__file__))) + file_name
+        print(path_to_file)
+        # set that file as google application credentials
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"]=path_to_file
+        project_id = agent.project_id
         session_client = dialogflow.SessionsClient()
         session = session_client.session_path(project_id, session_id)
         if text:
@@ -135,8 +146,7 @@ def detect_intent_texts(project_id, session_id, text, language_code):
 
 def send_message(question, sid, name, email_id, course_id, date):
 
-    project_id = Config.DIALOGFLOW_PROJECT_ID
-    fulfillment_text = detect_intent_texts(project_id, "unique", question, 'en')
+    fulfillment_text = detect_intent_texts("unique", question, 'en', course_id)
     response_text = { "message":  fulfillment_text, "name": name }
     #add QA into db - update query_input
     connect(app.config['MONGO_URI'])
@@ -158,32 +168,6 @@ def send_message(question, sid, name, email_id, course_id, date):
     #    { "$push":{"students.$.chat_history.0.chats": { "$each": [{ "question":question, "answer":fulfillment_text }] }}})
 
     return response_text
-
-def create_intent(project_id, display_name, training_phrases_parts,
-                  message_texts):
-    """Create an intent of the given intent type."""
-    import dialogflow_v2 as dialogflow
-    intents_client = dialogflow.IntentsClient()
-
-    parent = intents_client.project_agent_path(project_id)
-    training_phrases = []
-    for training_phrases_part in training_phrases_parts:
-        part = dialogflow.types.Intent.TrainingPhrase.Part(
-            text=training_phrases_part)
-        # Here we create a new training phrase for each provided part.
-        training_phrase = dialogflow.types.Intent.TrainingPhrase(parts=[part])
-        training_phrases.append(training_phrase)
-
-    text = dialogflow.types.Intent.Message.Text(text=message_texts)
-    message = dialogflow.types.Intent.Message(text=text)
-
-    intent = dialogflow.types.Intent(
-        display_name=display_name,
-        training_phrases=training_phrases,
-        messages=[message])
-
-    response = intents_client.create_intent(parent, intent)
-    print('Intent created: {}'.format(response))
 
 # socket io implementation
 @socketio.on('connect')
