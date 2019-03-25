@@ -33,4 +33,5 @@ class Course(MongoModel):
 
 class Agent(MongoModel):
     course_id=fields.CharField()
-    file_path=fields.CharField()
+    file_name=fields.CharField()
+    project_id=fields.CharField()
