@@ -56,12 +56,59 @@
           var socket = io.connect('https://ozcooper.net');
 
 
-          socket.on('answer',function(data) {
-          // append the bot repsonse to the div
+         // finds all links and converts to URL
+          function addClickableURL(s){
+            var scheme = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            var text = s.replace(scheme, '<a target="_blank" rel="noopener noreferrer" href="$1">$1</a>');
 
+            //if there is no scheme, replace again
+            var expression =/(^|[^\/])(www\.[\S]+(\b|$))/gim;
+            text = text.replace(expression, '$1<a target="_blank" rel="noopener noreferrer" href="http://$2">$2</a>')
+            return text;
+          }
+
+          // returns an img tag with the first youtube thumbnail in s (string)
+          function youtubeThumb(s) {
+
+            // first match non-share url
+            var result = s.match('[\\?&]v=([^ \r&#/?]*)');
+            var id = "";
+            //var id = (result === null) ? s: result[1];
+
+            // match share url
+            if (result === null) {
+              result = s.match('youtu\.be/([^ \r&#/?]+)');
+              id = (result === null) ? id : result[1];
+            } else {
+              id = result[1];
+            }
+            
+            // returns empty str if no vid, otherwise returns clickable thumbnail
+            if (id == ""){
+              return id;
+            } else {
+                var clickableThumbnail = '<br><a '
+                               + 'target="_blank" rel="noopener noreferrer"'
+                               + 'href="https://www.youtube.com/watch?v='
+                                           + id + '">'
+                                           + '<img '+ 'style="width: 70%; display:block; margin:auto;"'
+                                           + 'src="'+ 'http://img.youtube.com/vi/' 
+                                           + id + '/0.jpg' +'" /></a>'
+                return clickableThumbnail;
+            }
+          }
+
+          // append the bot repsonse to the div
+          socket.on('answer',function(data) {
+
+            // if contains URL, convert to clickable+new window
+            var convertedURL = addClickableURL(data.message);
+
+            // if contais youtube, add thumbnail
+            convertedURL += youtubeThumb(data.message);
 
             $('.chat-container').append(`<div class="chat-message rcorners1 bot-message" id="bMsg">
-            ${data.message}
+              ${convertedURL}
             </div>`)
             $('.chat-container').scrollTop(1000000);
 
