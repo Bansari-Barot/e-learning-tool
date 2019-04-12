@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}"/>
-
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
         <link href='https://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/custom.css') }}"/>
         <style>
 
 
@@ -23,7 +23,7 @@
 
           <div class="container h-100">
             <div class="container text-center">
-            <h4 class="text-monospace"> Olivia Cortez - Your faithful TA for {{course_name}} Course</h4>
+            <h4 id="bootstrap-overrides" class="text-monospace" tabindex="0"> Olivia Cortez - Your faithful TA for {{course_name}} Course</h4>
             </div>
             <div class="row align-items-center h-100">
                 <div class="col-md-8 col-sm-12 mx-auto">
@@ -31,7 +31,7 @@
                     <div class="h-100 justify-content-center">
 
                         <div class="chat-container" style="overflow: auto; max-height: 55vh">
-                          <div class="chat-message bot-message rcorners1" id="bMsg">
+                          <div class="chat-message bot-message rcorners1" id="bMsg" tabindex="0">
 
                             Hello, {{greeting}} {{name}}!! I am here to answer some of your questions related to your {{course_name}} course.
                           </div>
@@ -57,11 +57,13 @@
 
 
           socket.on('answer',function(data) {
+            //console.log('Check out the answer', answer)
+            console.log('Data here', data)
           // append the bot repsonse to the div
 
 
-            $('.chat-container').append(`<div class="chat-message rcorners1 bot-message" id="bMsg">
-            ${data.message}
+            $('.chat-container').append(`<div class="chat-message rcorners1 bot-message" id="bMsg" tabindex="0">
+            Olivia Cortez: ${data.message}
             </div>`)
             $('.chat-container').scrollTop(1000000);
 
@@ -79,14 +81,14 @@
                       }
 
                       $('.chat-container').append(`
-                          <div class="chat-message human-message humantext">
-                          ${input_message}
+                          <div class="chat-message human-message humantext" tabindex="0">
+                          You : ${input_message}
                           </div>
                       `)
 
                       // loading
                       $('.chat-container').append(`
-                          <div class="chat-message bot-message rcorners1" id="loading">
+                          <div class="chat-message bot-message rcorners1" id="loading" tabindex="0">
                               <b>...</b>
                           </div>
                       `)

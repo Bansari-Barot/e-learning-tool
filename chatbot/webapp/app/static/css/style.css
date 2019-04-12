@@ -8,6 +8,7 @@ body,html {
     background-color: fffaf0;
     margin: 0px;
     align-content: center;
+    height: 50%!important
   }
 
 .chat-message {
@@ -53,6 +54,7 @@ body,html {
         color: white;
         text-align: right;
     }
+
 
     .input {
       width: 100%;
