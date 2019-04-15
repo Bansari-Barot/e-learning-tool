@@ -1,12 +1,17 @@
-[  
-    {  
+[
+    {
         "course_id":"BUS_110",
         "file_name":"/VirtualAssitsnt-b8278c42df35.json",
         "project_id":"virtualassitsnt"
     },
-    {  
+    {
         "course_id":"CSUEB",
         "file_name":"/transfertraining-584ad-19b79e01f84f.json",
         "project_id":"transfertraining-584ad"
+    },
+    {
+      "course_id":"CRAJ_340_12",
+      "file_name":"/craj-340-229805675b9e.json",
+      "project_id":"craj-340"
     }
 ]

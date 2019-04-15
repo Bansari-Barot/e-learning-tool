@@ -9,21 +9,20 @@
 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
         <link href='https://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/custom.css') }}"/>
         <style>
-
-
         </style>
 
         <!-- <script src="{{ url_for('static', filename='js/custom.js')}}"></script> -->
         <title>Teaching Assistant</title>
       </head>
-      <body>
+      <body scroll="no">
         <h3 style="align-self:left"></h3>
         <br/>
 
           <div class="container h-100">
             <div class="container text-center">
-            <h4 class="text-monospace"> Olivia Cortez - Your faithful TA for {{course_name}} Course</h4>
+            <h4 class="text-monospace" tabindex='0'> Olivia Cortez - Your faithful TA for {{course_name}} Course</h4>
             </div>
             <div class="row align-items-center h-100">
                 <div class="col-md-8 col-sm-12 mx-auto">
@@ -31,18 +30,20 @@
                     <div class="h-100 justify-content-center">
 
                         <div class="chat-container" style="overflow: auto; max-height: 55vh">
-                          <div class="chat-message bot-message rcorners1" id="bMsg">
+                          <div class="chat-message bot-message rcorners1" id="bMsg" tabindex='0'>
 
-                            Hello, {{greeting}} {{name}}!! I am here to answer some of your questions related to your {{course_name}} course.
+                          OLIVIA:  Hello, {{greeting}} {{name}}!! I am here to answer some of your questions related to your {{course_name}} course.
                           </div>
 
 
                     </div>
                     <form id="target">
-                       <input class="input" type="text" value="" placeholder="Press 'Enter' after typing..." id="input_message"/>
-                       <input type="submit" hidden>
+                      <input class="input" type="text" value="" placeholder="Type in your question here for Olivia..." id="input_message"/>
+                      <input type="submit" hidden>
                     </form>
                 </div>
+                <h6 class="h6">For any accessibility issues or any other kind of help, Please contact here: ocaiproject@gmail.com</h6>
+
 
             </div>
 
@@ -54,27 +55,21 @@
         <script>
           // testing - link: http://localhost/ and for deployment link : https://ozcooper.net
           var socket = io.connect('https://ozcooper.net');
-
-
          // finds all links and converts to URL
           function addClickableURL(s){
             var scheme = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
             var text = s.replace(scheme, '<a target="_blank" rel="noopener noreferrer" href="$1">$1</a>');
-
             //if there is no scheme, replace again
             var expression =/(^|[^\/])(www\.[\S]+(\b|$))/gim;
             text = text.replace(expression, '$1<a target="_blank" rel="noopener noreferrer" href="http://$2">$2</a>')
             return text;
           }
-
           // returns an img tag with the first youtube thumbnail in s (string)
           function youtubeThumb(s) {
-
             // first match non-share url
             var result = s.match('[\\?&]v=([^ \r&#/?]*)');
             var id = "";
             //var id = (result === null) ? s: result[1];
-
             // match share url
             if (result === null) {
               result = s.match('youtu\.be/([^ \r&#/?]+)');
@@ -82,7 +77,7 @@
             } else {
               id = result[1];
             }
-            
+
             // returns empty str if no vid, otherwise returns clickable thumbnail
             if (id == ""){
               return id;
@@ -92,30 +87,24 @@
                                + 'href="https://www.youtube.com/watch?v='
                                            + id + '">'
                                            + '<img '+ 'style="width: 70%; display:block; margin:auto;"'
-                                           + 'src="'+ 'http://img.youtube.com/vi/' 
+                                           + 'src="'+ 'http://img.youtube.com/vi/'
                                            + id + '/0.jpg' +'" /></a>'
                 return clickableThumbnail;
             }
           }
-
           // append the bot repsonse to the div
           socket.on('answer',function(data) {
-
             // if contains URL, convert to clickable+new window
             var convertedURL = addClickableURL(data.message);
-
             // if contais youtube, add thumbnail
             convertedURL += youtubeThumb(data.message);
-
-            $('.chat-container').append(`<div class="chat-message rcorners1 bot-message" id="bMsg">
-              ${convertedURL}
+            $('.chat-container').append(`<div class="chat-message rcorners1 bot-message" id="bMsg" tabindex='0'>
+              OLIVIA: ${convertedURL}
             </div>`)
             $('.chat-container').scrollTop(1000000);
-
             // remove the loading indicator
             $( "#loading" ).remove();
           });
-
               $('#target').on('submit', function(e){
                       e.preventDefault();
                       //alert("hi");
@@ -124,29 +113,23 @@
                       if (!input_message) {
                         return
                       }
-
                       $('.chat-container').append(`
-                          <div class="chat-message human-message humantext">
-                          ${input_message}
+                          <div class="chat-message human-message humantext" tabindex='0'>
+                          YOU: ${input_message}
                           </div>
                       `)
-
                       // loading
                       $('.chat-container').append(`
-                          <div class="chat-message bot-message rcorners1" id="loading">
+                          <div class="chat-message bot-message rcorners1" id="loading" tabindex='0'>
                               <b>...</b>
                           </div>
                       `)
-
                       // clear the text input
                       $('#input_message').val('')
-
-
                       // send the message
                       socket.emit('question',{question:input_message,email_id: "{{email_id}}", name: "{{name}}", course_id: "{{course_id}}" })
                       //submit_message(input_message)
                   });
-
         </script>
 
       </body>
