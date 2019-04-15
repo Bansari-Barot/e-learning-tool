@@ -17,7 +17,21 @@ body,html {
     margin: 3px;
     max-width: 85%;
 }
+html, body {margin: 0; height: 100%; overflow: hidden; }
+.h6,h6{
+  font-size: 0.5rem;
+  border-color: darkgray;
+  border-width: unset;
+  color: dodgerblue;
+  border-radius: 10px;
+  border-style: dashed;
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 20px;
+  font-style: oblique;
 
+}
 .rcorners1 {
 
     background:lightgrey;
@@ -32,7 +46,7 @@ body,html {
   }
   .humantext{
     border-radius: 25px;
-    background:#4885ed;
+    background:#1352BE;
     align-self: right;
     width: fit-content;
     margin-left: auto;
@@ -65,8 +79,8 @@ body,html {
       padding-left: 10px;
     }
 
-h3{
-  font-family:Courier New;
+h4{
+    font-family:Courier New;
 }
 
 input {

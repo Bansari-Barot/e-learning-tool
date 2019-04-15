@@ -16,7 +16,7 @@
         <!-- <script src="{{ url_for('static', filename='js/custom.js')}}"></script> -->
         <title>Teaching Assistant</title>
       </head>
-      <body>
+      <body scroll="no">
         <h3 style="align-self:left"></h3>
         <br/>
 
@@ -30,9 +30,9 @@
                     <div class="h-100 justify-content-center">
 
                         <div class="chat-container" style="overflow: auto; max-height: 55vh">
-                          <div class="chat-message bot-message rcorners1" id="bMsg">
+                          <div class="chat-message bot-message rcorners1" id="bMsg" tabindex='0'>
 
-                            Hello, {{greeting}} {{name}}!! I am here to answer some of your questions related to your {{course_name}} course.
+                          OLIVIA:  Hello, {{greeting}} {{name}}!! I am here to answer some of your questions related to your {{course_name}} course.
                           </div>
 
 
@@ -42,6 +42,8 @@
                       <input type="submit" hidden>
                     </form>
                 </div>
+                <h6 class="h6">For any accessibility issues or any other kind of help, Please contact here: ocaiproject@gmail.com</h6>
+
 
             </div>
 
@@ -97,7 +99,7 @@
             // if contais youtube, add thumbnail
             convertedURL += youtubeThumb(data.message);
             $('.chat-container').append(`<div class="chat-message rcorners1 bot-message" id="bMsg" tabindex='0'>
-              ${convertedURL}
+              OLIVIA: ${convertedURL}
             </div>`)
             $('.chat-container').scrollTop(1000000);
             // remove the loading indicator
@@ -113,7 +115,7 @@
                       }
                       $('.chat-container').append(`
                           <div class="chat-message human-message humantext" tabindex='0'>
-                          ${input_message}
+                          YOU: ${input_message}
                           </div>
                       `)
                       // loading
