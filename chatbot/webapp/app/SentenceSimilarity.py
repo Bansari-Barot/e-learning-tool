@@ -9,6 +9,7 @@ import seaborn as sns
 import gensim
 from gensim import corpora
 from nltk.tokenize import word_tokenize
+from os.path import dirname, abspath
 from decimal import Decimal
 
 class SentenceSimilarityHandler():
@@ -60,7 +61,9 @@ class SentenceSimilarityHandler():
         s = 0
         for i in corpus:
                 s += len(i)
-        sims = gensim.similarities.Similarity('/Users/onlinecampus/Documents/Karthik/SemanticEncoder/USC/Similarity/sims',tf_idf[corpus],
+        file_path = dirname(abspath(__file__)) + '/similaritymatrix/'
+        print('file_path: ', file_path)
+        sims = gensim.similarities.Similarity(file_path,tf_idf[corpus],
                                                 num_features=len(dictionary))
 
         query_doc = [w.lower() for w in word_tokenize(messages[1])]

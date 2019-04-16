@@ -16,22 +16,104 @@ from os.path import dirname, abspath
 from google.auth._default import _load_credentials_from_file
 from app import socketio
 from flask_socketio import send, emit
+import random
+import ast
 
-# @app.route('/', methods=['GET','POST'])
-# def login():
-#     return render_template('login.html')
+@app.route('/test_assessment', methods=['GET','POST'])
+def test_assessment():
+    # first check if in request there is already list of question_pool
+    #data = request.form['question_pool']
+    #data = request.form
+    if request.form.get('question_pool'):
+        # if there is question pool then from then pool get the first question from that pool
+        email_id=request.form['email_id']
+        name=request.form['name']
+        course_id=request.form['course_id']
+        question_pool=request.form['question_pool']
+        course_name=request.form['course_name']
+        role=request.form['role']
+        net_id=request.form['net_id']
+        quiz_id=int(request.form['quiz_id'])
+        currentQ=int(request.form['currentQ'])
+        currentQ += 1
+        totalQ=request.form['totalQ']
+        question_pool = ast.literal_eval(question_pool)
+        if (len(question_pool)):
+            connect(app.config['MONGO_URI'])
+            quiz_all = Course.objects.select_related('quiz').get({"course_id":course_id}).quiz
+            quiz_req = [x.qa for x in quiz_all if x.q_id == quiz_id]
+            question_id = question_pool.pop(0)
+            question = [x.question for x in quiz_req[0] if x.question_id == question_id]
+            print(question)
+            return render_template('test_assessment.html', role=role,name=name, net_id=net_id,
+                                                           email_id=email_id, course_id=course_id, course_name=course_name,
+                                                           question_pool=question_pool, question=question[0],
+                                                           question_id=question_id, quiz_id=quiz_id,
+                                                           totalQ=totalQ, currentQ=currentQ)
+        return render_template('test_assessment.html',role=role,name=name, net_id=net_id,
+                                email_id=email_id, course_id=course_id, course_name=course_name,
+                                totalQ=totalQ, currentQ=currentQ)
+    # if there is not any question pool then based on quiz id get all the question
+    # here there should be proper query but as of now its a temporary fix to count the number of question in given quiz
+    email_id=request.form['email_id']
+    name=request.form['name']
+    course_id=request.form['course_id']
+    course_name=request.form['course_name']
+    role=request.form['role']
+    net_id=request.form['net_id']
+    quiz_id=1
+    connect(app.config['MONGO_URI'])
+    # query to select all the quiz given course_id
+    quiz_all = Course.objects.select_related('quiz').get({"course_id":course_id}).quiz
+    # query to get particular quiz given q_id
+    quiz_req = [x.qa for x in quiz_all if x.q_id == quiz_id]
+    # count the total number of question in a quiz
+    totalQ= len(quiz_req[0])
+    #num_of_question = len(course.quiz[0].qa)
+    question_pool = []
+    for i in range(totalQ):
+        question_pool.append(i+1)
+    random.shuffle(question_pool)
+    #from question_pool pop first q_id and get that question from db and and return the template with question, question_id & question_pool
+    question_id = question_pool.pop(0)
+    question = [x.question for x in quiz_req[0] if x.question_id == question_id]
+    question_pool = str(question_pool)
+    return render_template('test_assessment.html', role=role,name=name, net_id=net_id,
+                                                   email_id=email_id, course_id=course_id, course_name=course_name,
+                                                   question_pool=question_pool, question=question[0],
+                                                   question_id=question_id, quiz_id=quiz_id,
+                                                   totalQ=totalQ, currentQ=1)
+
 
 #LTI arguments by BB
 @app.route('/', methods=['GET','POST'])
 def index():
     if request.form:
         info_user=request.form
-        name=info_user['lis_person_name_full']
-        role=info_user['roles']
-        course_id=info_user['context_label']
-        net_id=info_user['lis_person_sourcedid']
-        course_name=info_user['context_title']
-        email_id = info_user['lis_person_contact_email_primary']
+        if info_user.get('lis_person_name_full'):
+            name=info_user['lis_person_name_full']
+        else:
+            name=info_user['name']
+        if info_user.get('roles'):
+            role=info_user['roles']
+        else:
+            role=info_user['role']
+        if info_user.get('context_label'):
+            course_id=info_user['context_label']
+        else:
+            course_id=info_user['course_id']
+        if info_user.get('lis_person_sourcedid'):
+            net_id=info_user['lis_person_sourcedid']
+        else:
+            net_id=info_user['net_id']
+        if info_user.get('context_title'):
+            course_name=info_user['context_title']
+        else:
+            course_name=info_user['course_name']
+        if info_user.get('lis_person_contact_email_primary'):
+            email_id=info_user['lis_person_contact_email_primary']
+        else:
+            email_id=info_user['email_id']
         currentTime=datetime.datetime.now()
         greeting=""
         if currentTime.hour<12:
@@ -52,14 +134,16 @@ def index():
             try:
                 user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
                 course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-                return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name, greeting=greeting)
+                return render_template('index.html',role=role,name=name, net_id=net_id,
+                                        email_id=email_id, course_id=course_id, course_name=course_name, greeting=greeting)
             except Course.DoesNotExist:
                 course_info = {"name": name, "email_id": email_id, "course_id": course_id}
                 Course.objects.raw({"course_id":course_id}).update(
                     { "$push":{"students": { "$each": [{'name':name,'email_id':email_id, 'net_id':net_id}] } } } )
                 user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
                 st = str(user.students)
-                return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
+                return render_template('index.html',role=role,name=name, net_id=net_id,
+                                        email_id=email_id, course_id=course_id, course_name=course_name,greeting=greeting)
 
         except Course.DoesNotExist:
             student = Student(name=name, email_id=email_id, net_id=net_id,role=role)
@@ -69,7 +153,8 @@ def index():
             course = Course.objects.get({'course_id':course_id})
             print(course)
             course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-            return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
+            return render_template('index.html',role=role,name=name, net_id=net_id,
+                                    email_id=email_id, course_id=course_id, course_name=course_name,greeting=greeting)
     else:
         return render_template('login.html')
         #return render_template('index.html',role=role,name= "bansri", email_id= "bansri.barot72@gmail.com", course_id= "CSUEB", course_name="CSUEB generic Q/A")
@@ -103,14 +188,16 @@ def guest_login():
         try:
             user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
             course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-            return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
+            return render_template('index.html',role=role,name= name, net_id=net_id,
+                                    email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
         except Course.DoesNotExist:
             course_info = {"name": name, "email_id": email_id, "course_id": course_id}
             Course.objects.raw({"course_id":course_id}).update(
                 { "$push":{"students": { "$each": [{'name':name,'email_id':email_id, 'net_id':net_id}] } } } )
             user = Course.objects.get({'course_id':course_id,'students.email_id':email_id})
             st = str(user.students)
-            return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
+            return render_template('index.html',role=role,name= name, net_id=net_id,
+                                    email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
 
     except Course.DoesNotExist:
         student = Student(name=name, email_id=email_id, net_id=net_id, role=role)
@@ -118,7 +205,8 @@ def guest_login():
         course = Course.objects.get({'course_id':course_id})
         print(course)
         course_info = {"name": name, "email_id": email_id, "course_id": course_id}
-        return render_template('index.html',role=role,name= name, email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
+        return render_template('index.html',role=role,name= name, net_id=net_id,
+                                email_id= email_id, course_id= course_id, course_name=course_name,greeting=greeting)
 
 
 
@@ -179,6 +267,7 @@ def socket_connection():
 def socket_disconnect():
     pass
 
+# to get question for dialogflow
 @socketio.on('question')
 def handle_question(msg):
     # get a question and its answer here
@@ -188,6 +277,19 @@ def handle_question(msg):
     course_id = msg['course_id']
     sid = request.sid
     date = datetime.datetime.now()
-    # check whether the the sid is already in chat history if not then insert else update query
     answer = send_message(question,sid,name,email_id,course_id,date)
     socketio.emit('answer',answer,room = sid)
+
+# to get answer for quiz
+@socketio.on('quiz_answer')
+def handle_question(msg):
+    user_answer = msg['answer']
+    name = msg['name']
+    email_id = msg['email_id']
+    course_id = msg['course_id']
+    question_id = msg['question_id']
+    tid = request.sid
+    date = datetime.datetime.now()
+    #answer = send_message(question,sid,name,email_id,course_id,date)
+    answer = { "message":  user_answer, "name": name}
+    socketio.emit('quiz_feedback',answer,room = tid)

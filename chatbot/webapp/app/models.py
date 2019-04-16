@@ -1,11 +1,4 @@
 from pymodm import MongoModel, fields, EmbeddedMongoModel
-#from pymongo.write_concern import WriteConcern
-#from app import mongo
-#from pymodm import connect
-#from app import app
-
-
-#connect(app.config['MONGO_URI'])
 
 class Chat(EmbeddedMongoModel):
     question=fields.CharField()
@@ -16,14 +9,19 @@ class Chat_History(EmbeddedMongoModel):
     c_id=fields.CharField()
     chats=fields.EmbeddedDocumentListField(Chat)
 
-class Feedback(EmbeddedMongoModel):
-    question=fields.CharField()
+class Answers(EmbeddedMongoModel):
     answer=fields.CharField()
     points=fields.IntegerField()
     suggestion=fields.CharField()
 
+class Feedback(EmbeddedMongoModel):
+    question_id=fields.IntegerField()
+    question=fields.CharField()
+    answers=fields.EmbeddedDocumentListField(Answers)
+
 class Quiz_record(EmbeddedMongoModel):
     datetimestamp=fields.DateTimeField()
+    tid=fields.CharField()
     quiz_id=fields.IntegerField()
     score=fields.IntegerField()
     feedbacks=fields.EmbeddedDocumentListField(Feedback)
@@ -37,6 +35,7 @@ class Student(EmbeddedMongoModel):
     quiz_result=fields.EmbeddedDocumentListField(Quiz_record)
 
 class Question_answer(EmbeddedMongoModel):
+    question_id=fields.IntegerField()
     question=fields.CharField()
     answer=fields.CharField()
 

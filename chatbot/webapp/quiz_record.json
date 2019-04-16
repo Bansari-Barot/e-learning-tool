@@ -1,0 +1,52 @@
+[
+ {
+   "question_id": 1,
+   "question": "what is hardware?",
+   "answer": "any physical or touchable component of a computer system that contains a circuit board, ICs, or other electronics."
+ },
+ {
+   "question_id": 2,
+   "question": "what is software?",
+   "answer": "Software is a set of instructions that tells the hardware what to do. Software is not tangible ��� it cannot be touched. When programmers create software programs, what they are really doing is simply typing out lists of instructions that tell the hardware what to do."
+ },
+ {
+   "question_id": 3,
+   "question": "what is data?",
+   "answer": "You can think of data as a collection of facts. For example, your street address, the city you live in, and your phone number are all pieces of data. Like software, data is also intangible. By themselves, pieces of data are not really very useful. But aggregated, indexed, and organized together into a database, data can become a powerful tool for businesses"
+ },
+ {
+   "question_id": 4,
+   "question": "What is application software?",
+   "answer": "Application software is a program or group of programs designed for end users. These programs are divided into two classes: system software and application software."
+ },
+ {
+   "question_id": 5,
+   "question": "What roles do people play in information systems?",
+   "answer": "From the front-line help-desk workers, to systems analysts, to programmers, all the way up to the chief information officer (CIO), the people involved with information systems are an essential element that must not be overlooked."
+ },
+ {
+   "question_id": 6,
+   "question": "Define Customer Relationship Management(CRM)? ",
+   "answer": "A customer relationship management (CRM) system is a software application designed to manage an organization�۪s customers. In today�۪s environment, it is important to develop relationships with your customers, and the use of a well-designed CRM can allow a business to personalize its relationship with each of its customers. Some ERP software systems include CRM modules. An example of a well-known CRM package is Salesforce."
+ },
+ {
+   "question_id": 7,
+   "question": "What are mobile Applications",
+   "answer": "A mobile app is a software application programmed to run specifically on a mobile device."
+ },
+ {
+   "question_id": 8,
+   "question": "What is cloud?",
+   "answer": "The cloud refers to applications, services, and data storage on the Internet. These service providers rely on giant server farms and massive storage devices that are connected via Internet protocols. Cloud computing is the use of these services by individuals and organizations"
+ },
+ {
+   "question_id": 9,
+   "question": "Define Virtualization",
+   "answer": "Virtualization is the process of using software to simulate a computer or some other device. For example, using virtualization, a single computer can perform the functions of several computers. Companies such as EMC provide virtualization software that allows cloud service providers to provision web servers to their clients quickly and efficiently."
+ },
+ {
+   "question_id": 10,
+   "question": "What are open Source Softwares?",
+   "answer": "Open-source software is software that makes the source code available for anyone to copy and use. For most of us, having access to the source code of a program does little good."
+ }
+]

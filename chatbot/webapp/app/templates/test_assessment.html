@@ -1,0 +1,188 @@
+<!doctype html>
+    <html lang="en">
+      <head>
+          <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}"/>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+        <link href='https://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
+        <style>
+
+
+        </style>
+
+        <!-- <script src="{{ url_for('static', filename='js/custom.js')}}"></script> -->
+        <title>Teaching Assistant</title>
+      </head>
+      <body>
+        <h3 style="align-self:left"></h3>
+        <br/>
+
+          <div class="container h-100">
+            <div class="container text-center">
+            <h4 class="text-monospace"> Olivia Cortez - Your faithful TA for {{course_name}} Course</h4>
+            </div>
+            <div class="row align-items-center h-100">
+                <div class="col-md-8 col-sm-12 mx-auto">
+
+                    <div class="h-100 justify-content-center">
+
+                        <div class="chat-container" style="overflow: auto; max-height: 55vh">
+                          {% if currentQ==1 %}
+                          <div class="chat-message bot-message rcorners1" id="bMsg" style="font-family:sens-serif;">
+
+                            Hello, {{name}}!!
+
+                          </div>
+                          {% endif %}
+                          <div class="chat-message bot-message rcorners1" id="bMsg" style="font-family:sens-serif;">
+                            QUESTION {{currentQ}}/{{totalQ}}
+                          </div>
+                          <div class="chat-message bot-message rcorners1" id="bMsg">
+                            {{question}}
+                          </div>
+
+
+                        </div>
+                    <form id="target">
+                       <input class="input" type="text" value="" placeholder="Press 'Enter' after typing..." id="input_message"/>
+                       <input type="submit" hidden>
+                    </form>
+                </div>
+                <div class="view_form" id="viewForm">
+                </div>
+
+            </div>
+
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+        <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+        <script>
+          // testing - link: http://localhost/ and for deployment link : https://ozcooper.net
+          var socket = io.connect('http://localhost/');
+
+
+          socket.on('quiz_feedback',function(data) {
+          // append the bot repsonse to the div
+
+
+            $('.chat-container').append(`<div class="chat-message rcorners1 bot-message" id="bMsg">
+            ${data.message}
+            </div>`)
+            $('.chat-container').scrollTop(100000);
+
+            // remove the loading indicator
+            $( "#loading" ).remove();
+            if({{currentQ}}=={{totalQ}}){
+              if($("#viewForm form").length == 0){
+                $( ".view_form" ).append(`<form id="view_form" class="quizEnd" action="/" method="POST">
+                                          <input type="text" name="role" hidden value={{role}}>
+                                          <input type="text" name="name" hidden value={{name}}>
+                                          <input type="text" name="net_id" hidden value={{net_id}}>
+                                          <input type="text" name="email_id" hidden value={{email_id}}>
+                                          <input type="text" name="course_id"  hidden value={{course_id}}>
+                                          <input type="text" name="course_name" hidden value={{course_name}}>
+                                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                                            End Quiz
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <div class="modal-content">
+                                                  <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLongTitle">Score 9/10</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                      <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                  </div>
+                                                  <div class="modal-body">
+                                                    Congratulations!! You have finished your quiz.
+                                                    Click on Olivia Cortez to go to Teaching Assistant page.
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button class="btn btn-primary" id="endQuiz" type="submit" formaction="/">Olivia Cortez</button>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+
+                                          </form>`);
+
+                            
+              }
+            }
+            else{
+              if($("#viewForm form").length == 0){
+                $( ".view_form" ).append(`<form id="view_form"  action="/test_assessment" method="POST">
+                                          <input type="text" name="email_id" hidden value={{email_id}}>
+                                          <input type="text" name="course_id"  hidden value={{course_id}}>
+                                          <input type="text" name="name" hidden value={{name}}>
+                                          <input type="text" name="role" hidden value={{role}}>
+                                          <input type="text" name="net_id" hidden value={{net_id}}>
+                                          <input type="text" name="course_name" hidden value={{course_name}}>
+                                          <input type="text" name="question_pool" hidden value="{{question_pool}}">
+                                          <input type="text" name="quiz_id" hidden value="{{quiz_id}}">
+                                          <input type="text" name="totalQ" hidden value="{{totalQ}}">
+                                          <input type="text" name="currentQ" hidden value="{{currentQ}}">
+                                          <button id="submit" type="submit" formaction="/test_assessment">
+                                            Next Question
+                                          </button>
+                                          </form>`);
+              }
+            }
+
+            // $( ".view_form" ).append(`<form id="view_form"  action="/test_assessment" method="POST">
+            //                           <input class="input100" type="text" name="email_id" hidden value={{email_id}}>
+            //                           <input class="input100" type="text" name="course_id"  hidden value={{course_id}}>
+            //                           <input class="input100" type="text" name="name" hidden value={{name}}>
+            //                           <button id="submit" type="submit" formaction="/test_assessment">
+            //                             Next Question
+            //                           </button>
+            //                           </form>`);
+          });
+
+              $('#target').on('submit', function(e){
+                      e.preventDefault();
+                      //alert("hi");
+                      const input_message = $('#input_message').val()
+                      // return if the user does not enter any text
+                      if (!input_message) {
+                        return
+                      }
+
+                      $('.chat-container').append(`
+                          <div class="chat-message human-message humantext">
+                          ${input_message}
+                          </div>
+                      `)
+
+                      // loading
+                      $('.chat-container').append(`
+                          <div class="chat-message bot-message rcorners1" id="loading">
+                              <b>...</b>
+                          </div>
+                      `)
+
+                      // clear the text input
+                      $('#input_message').val('')
+
+
+                      // send the message
+                      socket.emit('quiz_answer',{answer: input_message,email_id: "{{email_id}}",
+                                                 name: "{{name}}", course_id: "{{course_id}}",
+                                                 question_id: "{{question_id}}", quiz_id: "{{quiz_id}}" })
+                      //submit_message(input_message)
+                  });
+
+        </script>
+
+      </body>
+    </html>
