@@ -1,10 +1,6 @@
 [
     {
-<<<<<<< HEAD
         "course_id":"20195_BUS_110_01_1",
-=======
-        "course_id":"BUS_110",
->>>>>>> 6b7d925b24a2769cbb80dd22bf698f9e869e1df4
         "file_name":"/VirtualAssitsnt-b8278c42df35.json",
         "project_id":"virtualassitsnt"
     },
@@ -14,14 +10,8 @@
         "project_id":"transfertraining-584ad"
     },
     {
-<<<<<<< HEAD
       "course_id":"AI_20195_CRJ_340_01_1",
       "file_name":"/craj-340-52cab3e5b164.json",
       "project_id":"/craj-340"
-=======
-      "course_id":"CRAJ_340_12",
-      "file_name":"/craj-340-229805675b9e.json",
-      "project_id":"craj-340"
->>>>>>> 6b7d925b24a2769cbb80dd22bf698f9e869e1df4
     }
 ]
