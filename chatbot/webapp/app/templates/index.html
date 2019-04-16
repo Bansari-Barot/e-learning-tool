@@ -43,14 +43,14 @@
                     </form>
                 </div>
                 <h6 class="h6" tabindex="0">For any questions, issues, or concerns please contact online@csueastbay.edu</h6>
-                <form action="/test_assessment" method="POST">
+                <form action="/test_assessment" method="POST" style="padding-top:40px;">
                   <input type="text" name="email_id" hidden value={{email_id}}>
                   <input type="text" name="course_id"  hidden value={{course_id}}>
                   <input type="text" name="name" hidden value={{name}}>
                   <input type="text" name="role" hidden value={{role}}>
                   <input type="text" name="net_id" hidden value={{net_id}}>
                   <input type="text" name="course_name" hidden value={{course_name}}>
-                  <button id="submit" type="submit" formaction="/test_assessment">
+                  <button id="submit" class="btn btn-outline-success" type="submit" formaction="/test_assessment">
                     Start Quiz
                   </button>
                 </form>
